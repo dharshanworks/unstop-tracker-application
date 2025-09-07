@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubTracker - Personal Subscription Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-logo">📊</div>
+            <div class="loading-text">SubTracker</div>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Particles Background -->
+    <div class="particles-background" id="particlesBackground">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar glassmorphism" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="nav-brand animate-slide-in">
+                    <div class="nav-logo pulse-animation">📊</div>
+                    <h2 class="gradient-text">SubTracker</h2>
+                </div>
+                
+                <div class="nav-menu" id="navMenu">
+                    <a href="#" class="nav-link hover-lift" data-page="homepage">
+                        <span class="nav-icon">🏠</span> Home
+                    </a>
+                    <a href="#" class="nav-link auth-required hover-lift" data-page="dashboard">
+                        <span class="nav-icon">📊</span> Dashboard
+                    </a>
+                    <a href="#" class="nav-link auth-required hover-lift" data-page="analytics">
+                        <span class="nav-icon">📈</span> Analytics
+                    </a>
+                    <a href="#" class="nav-link auth-required hover-lift" data-page="profile">
+                        <span class="nav-icon">👤</span> Profile
+                    </a>
+                    
+                    <div class="nav-actions">
+                        <!-- Notifications -->
+                        <div class="notification-bell" id="notificationBell">
+                            <button class="icon-btn hover-bounce" title="Notifications">
+                                🔔
+                                <span class="notification-badge" id="notificationBadge">2</span>
+                            </button>
+                            <div class="notification-dropdown" id="notificationDropdown">
+                                <div class="notification-header">
+                                    <h4>Notifications</h4>
+                                    <button class="mark-all-read" id="markAllRead">Mark all read</button>
+                                </div>
+                                <div class="notification-list" id="notificationList">
+                                    <div class="notification-item unread">
+                                        <div class="notification-icon">🔔</div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Spotify renews tomorrow</div>
+                                            <div class="notification-time">2 hours ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="notification-item unread">
+                                        <div class="notification-icon">🏆</div>
+                                        <div class="notification-content">
+                                            <div class="notification-title">Achievement unlocked!</div>
+                                            <div class="notification-time">1 day ago</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Search -->
+                        <div class="search-container">
+                            <button class="icon-btn search-toggle hover-bounce" id="searchToggle" title="Search">
+                                🔍
+                            </button>
+                            <div class="search-dropdown" id="searchDropdown">
+                                <input type="text" placeholder="Search subscriptions..." id="globalSearch" class="search-input">
+                                <div class="search-results" id="searchResults"></div>
+                            </div>
+                        </div>
+
+                        <!-- Theme Toggle -->
+                        <button class="theme-toggle icon-btn hover-spin" id="themeToggle" title="Toggle theme">
+                            <span class="theme-icon sun-icon">☀️</span>
+                            <span class="theme-icon moon-icon">🌙</span>
+                        </button>
+
+                        <!-- Auth Section -->
+                        <div class="auth-section" id="authSection">
+                            <div class="guest-actions" id="guestActions">
+                                <button class="btn btn--outline btn--sm hover-lift" data-page="signin">Sign In</button>
+                                <button class="btn btn--primary btn--sm hover-lift pulse-glow" data-page="register">Sign Up</button>
+                            </div>
+                            <div class="user-menu hidden" id="userMenu">
+                                <div class="user-avatar hover-bounce" id="userAvatar"></div>
+                                <div class="user-dropdown glassmorphism" id="userDropdown">
+                                    <div class="user-info">
+                                        <div class="user-name" id="displayUserName">User</div>
+                                        <div class="user-email" id="displayUserEmail">user@example.com</div>
+                                        <div class="user-streak">🔥 <span id="userStreak">15</span> day streak</div>
+                                    </div>
+                                    <hr>
+                                    <a href="#" class="dropdown-item hover-lift" data-page="profile">⚙️ Profile</a>
+                                    <a href="#" class="dropdown-item hover-lift" data-page="achievements">🏆 Achievements</a>
+                                    <a href="#" class="dropdown-item hover-lift" id="logoutBtn">🚪 Logout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="nav-toggle burger-menu" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Homepage -->
+    <div class="page fade-in" id="homepage">
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text animate-slide-up">
+                        <div class="hero-badge pulse-glow">✨ #1 Subscription Tracker</div>
+                        <h1 class="gradient-text">Track Your Subscriptions Like a Pro</h1>
+                        <p class="fade-in-delayed">Take control of your recurring subscriptions with our intelligent, beautifully designed tracker. Monitor spending, get smart alerts, and discover amazing savings opportunities.</p>
+                        <div class="hero-actions">
+                            <button class="btn btn--primary btn--lg hover-lift pulse-glow" data-page="register">
+                                <span>Get Started Free</span>
+                                <span class="btn-shimmer"></span>
+                            </button>
+                            <button class="btn btn--outline btn--lg hover-lift" data-page="signin">
+                                <span>Sign In</span>
+                                <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="hero-stats animate-counter">
+                            <div class="stat hover-lift">
+                                <div class="stat-number" data-target="200">$0+</div>
+                                <div class="stat-label">Avg. Monthly Savings</div>
+                            </div>
+                            <div class="stat hover-lift">
+                                <div class="stat-number" data-target="10000">0+</div>
+                                <div class="stat-label">Happy Users</div>
+                            </div>
+                            <div class="stat hover-lift">
+                                <div class="stat-number" data-target="99">0%</div>
+                                <div class="stat-label">Satisfaction</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="hero-dashboard glassmorphism hover-float">
+                            <div class="demo-header">
+                                <div class="demo-controls">
+                                    <span class="demo-dot red pulse-animation"></span>
+                                    <span class="demo-dot yellow pulse-animation"></span>
+                                    <span class="demo-dot green pulse-animation"></span>
+                                </div>
+                                <div class="demo-title">SubTracker Dashboard</div>
+                            </div>
+                            <div class="demo-content">
+                                <div class="demo-subscriptions">
+                                    <div class="demo-sub netflix slide-in-animation">
+                                        <div class="demo-sub-icon">🎬</div>
+                                        <div class="demo-sub-info">
+                                            <div class="demo-sub-name">Netflix</div>
+                                            <div class="demo-sub-category">Entertainment</div>
+                                        </div>
+                                        <span class="demo-sub-price">$15.49</span>
+                                    </div>
+                                    <div class="demo-sub spotify slide-in-animation">
+                                        <div class="demo-sub-icon">🎵</div>
+                                        <div class="demo-sub-info">
+                                            <div class="demo-sub-name">Spotify</div>
+                                            <div class="demo-sub-category">Music</div>
+                                        </div>
+                                        <span class="demo-sub-price">$9.99</span>
+                                    </div>
+                                    <div class="demo-sub adobe slide-in-animation">
+                                        <div class="demo-sub-icon">🎨</div>
+                                        <div class="demo-sub-info">
+                                            <div class="demo-sub-name">Adobe CC</div>
+                                            <div class="demo-sub-category">Creative</div>
+                                        </div>
+                                        <span class="demo-sub-price">$52.99</span>
+                                    </div>
+                                </div>
+                                <div class="demo-total pulse-glow">
+                                    <div class="demo-total-label">Monthly Total:</div>
+                                    <div class="demo-total-amount gradient-text">$189.46</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features scroll-reveal">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-badge pulse-glow">🚀 Powerful Features</div>
+                    <h2>Everything you need to manage subscriptions</h2>
+                    <p>Simple tools for smart subscription management with AI-powered insights</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card hover-lift glassmorphism">
+                        <div class="feature-icon pulse-animation">📊</div>
+                        <h3>Smart Analytics</h3>
+                        <p>Visualize your spending patterns with interactive charts and AI-powered insights</p>
+                        <div class="feature-arrow">→</div>
+                    </div>
+                    <div class="feature-card hover-lift glassmorphism">
+                        <div class="feature-icon pulse-animation">🔔</div>
+                        <h3>Intelligent Alerts</h3>
+                        <p>Never miss a renewal with smart notifications and predictive reminders</p>
+                        <div class="feature-arrow">→</div>
+                    </div>
+                    <div class="feature-card hover-lift glassmorphism">
+                        <div class="feature-icon pulse-animation">💰</div>
+                        <h3>Money Saver</h3>
+                        <p>Discover hidden savings opportunities with our advanced optimization engine</p>
+                        <div class="feature-arrow">→</div>
+                    </div>
+                    <div class="feature-card hover-lift glassmorphism">
+                        <div class="feature-icon pulse-animation">🎯</div>
+                        <h3>Goal Tracking</h3>
+                        <p>Set spending goals and track progress with gamified achievement system</p>
+                        <div class="feature-arrow">→</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Sign In Page -->
+    <div class="page hidden fade-in" id="signin">
+        <div class="auth-container">
+            <div class="auth-card glassmorphism slide-in-animation">
+                <div class="auth-header">
+                    <div class="auth-logo pulse-animation">📊</div>
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to your SubTracker account</p>
+                </div>
+
+                <form class="auth-form" id="signinForm">
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control hover-focus" id="signinEmail" placeholder="Enter your email" required>
+                        <div class="input-underline"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="password-input">
+                            <input type="password" class="form-control hover-focus" id="signinPassword" placeholder="Enter your password" required>
+                            <button type="button" class="password-toggle hover-bounce" id="toggleSigninPassword">👁️</button>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-label hover-lift">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="checkmark"></span>
+                            Remember me
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary btn--full-width btn--lg hover-lift pulse-glow loading-btn" id="signinSubmit">
+                        <span class="btn-text">Sign In</span>
+                        <span class="btn-loader hidden">
+                            <div class="spinner"></div>
+                        </span>
+                        <span class="btn-shimmer"></span>
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="#" data-page="register" class="hover-underline">Create one</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Page -->
+    <div class="page hidden fade-in" id="register">
+        <div class="auth-container">
+            <div class="auth-card glassmorphism slide-in-animation">
+                <div class="auth-header">
+                    <div class="auth-logo pulse-animation">📊</div>
+                    <h1>Create Account</h1>
+                    <p>Start tracking your subscriptions today</p>
+                </div>
+
+                <form class="auth-form" id="registerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control hover-focus" id="firstName" placeholder="John" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control hover-focus" id="lastName" placeholder="Doe" required>
+                            <div class="input-underline"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control hover-focus" id="registerEmail" placeholder="john@example.com" required>
+                        <div class="input-underline"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="password-input">
+                            <input type="password" class="form-control hover-focus" id="registerPassword" placeholder="Create a strong password" required>
+                            <button type="button" class="password-toggle hover-bounce" id="toggleRegisterPassword">👁️</button>
+                            <div class="input-underline"></div>
+                        </div>
+                        <div class="password-strength animate-width" id="passwordStrength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-text">Password strength: <span id="strengthLevel">Weak</span></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label hover-lift">
+                            <input type="checkbox" id="termsAccepted" required>
+                            <span class="checkmark"></span>
+                            I agree to the <a href="#" target="_blank" class="hover-underline">Terms of Service</a> and <a href="#" target="_blank" class="hover-underline">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary btn--full-width btn--lg hover-lift pulse-glow loading-btn" id="registerSubmit">
+                        <span class="btn-text">Create Account</span>
+                        <span class="btn-loader hidden">
+                            <div class="spinner"></div>
+                        </span>
+                        <span class="btn-shimmer"></span>
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="#" data-page="signin" class="hover-underline">Sign in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="page hidden fade-in" id="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <div class="welcome-section animate-slide-in">
+                    <h1 id="welcomeMessage">Welcome back! 👋</h1>
+                    <p>Here's an overview of your subscriptions</p>
+                    <div class="achievement-banner" id="achievementBanner">
+                        <div class="achievement-icon">🏆</div>
+                        <div class="achievement-text">
+                            <div class="achievement-title">Subscription Master</div>
+                            <div class="achievement-desc">Managing 5+ subscriptions</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-actions">
+                    <button class="btn btn--outline hover-lift" id="exportDataBtn">
+                        📊 Export Data
+                    </button>
+                    <button class="btn btn--primary hover-lift pulse-glow" id="addSubscriptionBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Subscription
+                    </button>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-card primary hover-lift animate-number" data-delay="0">
+                            <div class="stat-header">
+                                <div class="stat-icon pulse-animation">📊</div>
+                                <div class="stat-trend positive">+2 📈</div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value animate-counter" id="totalSubscriptions" data-target="5">0</div>
+                                <div class="stat-label">Active Subscriptions</div>
+                                <div class="stat-progress">
+                                    <div class="progress-bar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card cost hover-lift animate-number" data-delay="100">
+                            <div class="stat-header">
+                                <div class="stat-icon pulse-animation">💰</div>
+                                <div class="stat-trend negative">+12% 📊</div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="monthlySpending">$189.46</div>
+                                <div class="stat-label">Monthly Spending</div>
+                                <div class="stat-progress">
+                                    <div class="progress-bar" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card savings hover-lift animate-number" data-delay="200">
+                            <div class="stat-header">
+                                <div class="stat-icon pulse-animation">📅</div>
+                                <div class="stat-trend neutral">Soon ⏰</div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="nextRenewal">3 days</div>
+                                <div class="stat-label">Next Renewal</div>
+                                <div class="stat-progress">
+                                    <div class="progress-bar" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card annual hover-lift animate-number" data-delay="300">
+                            <div class="stat-header">
+                                <div class="stat-icon pulse-animation">🎯</div>
+                                <div class="stat-trend positive">-$156 💰</div>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="yearlyTotal">$2,273.52</div>
+                                <div class="stat-label">Yearly Total</div>
+                                <div class="stat-progress">
+                                    <div class="progress-bar" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subscriptions-section">
+                    <div class="section-header">
+                        <h2>Your Subscriptions</h2>
+                        <div class="section-actions">
+                            <div class="search-box glassmorphism">
+                                <input type="text" placeholder="Search subscriptions..." id="subscriptionSearch" class="hover-focus">
+                                <button class="search-btn hover-bounce">🔍</button>
+                            </div>
+                            <select class="form-control filter-select glassmorphism" id="categoryFilter">
+                                <option value="all">All Categories</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Productivity">Productivity</option>
+                                <option value="Cloud Storage">Cloud Storage</option>
+                                <option value="Music">Music</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="subscriptions-grid" id="subscriptionsGrid">
+                        <!-- Subscriptions will be populated here -->
+                    </div>
+                </div>
+
+                <div class="insights-sidebar">
+                    <div class="upcoming-renewals-card glassmorphism hover-lift">
+                        <div class="card-header">
+                            <h3>📅 Upcoming Renewals</h3>
+                            <div class="card-badge">5</div>
+                        </div>
+                        <div class="renewals-list scroll-reveal" id="renewalsList">
+                            <!-- Renewals will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="spending-insights-card glassmorphism hover-lift">
+                        <div class="card-header">
+                            <h3>💡 AI Insights</h3>
+                            <div class="card-badge pulse-glow">New</div>
+                        </div>
+                        <div class="insights-content" id="spendingInsights">
+                            <div class="insight-item hover-lift">
+                                <div class="insight-icon">📈</div>
+                                <div class="insight-text">
+                                    <div class="insight-title">Monthly Trend</div>
+                                    <div class="insight-description">Spending increased by 12% this month</div>
+                                </div>
+                                <div class="insight-action">
+                                    <button class="btn btn--sm btn--outline hover-lift">View</button>
+                                </div>
+                            </div>
+                            <div class="insight-item hover-lift">
+                                <div class="insight-icon">⚠️</div>
+                                <div class="insight-text">
+                                    <div class="insight-title">Unused Services</div>
+                                    <div class="insight-description">Adobe CC hasn't been used in 30 days</div>
+                                </div>
+                                <div class="insight-action">
+                                    <button class="btn btn--sm btn--outline hover-lift">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="insight-item hover-lift">
+                                <div class="insight-icon">💰</div>
+                                <div class="insight-text">
+                                    <div class="insight-title">Savings Opportunity</div>
+                                    <div class="insight-description">Switch to annual billing to save $23/month</div>
+                                </div>
+                                <div class="insight-action">
+                                    <button class="btn btn--sm btn--primary hover-lift pulse-glow">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Page -->
+    <div class="page hidden fade-in" id="analytics">
+        <div class="container">
+            <div class="page-header">
+                <div class="page-header-content">
+                    <h1>📊 Analytics Dashboard</h1>
+                    <p>Deep insights into your subscription spending patterns with AI-powered recommendations</p>
+                </div>
+                <div class="analytics-controls">
+                    <select class="form-control glassmorphism" id="analyticsTimeframe">
+                        <option value="6">Last 6 months</option>
+                        <option value="12">Last 12 months</option>
+                        <option value="24">Last 2 years</option>
+                    </select>
+                    <button class="btn btn--outline hover-lift" id="exportAnalytics">
+                        📊 Export Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="analytics-dashboard">
+                <div class="analytics-overview">
+                    <div class="analytics-stat hover-lift animate-number">
+                        <div class="stat-icon pulse-animation">💰</div>
+                        <div class="stat-content">
+                            <div class="stat-value animate-counter" id="totalSpentYtd" data-target="2273.52">$0</div>
+                            <div class="stat-label">Total Spent (YTD)</div>
+                            <div class="stat-change positive pulse-glow">+12.3% ↗️</div>
+                        </div>
+                        <div class="stat-sparkline">
+                            <canvas width="100" height="30" id="totalSparkline"></canvas>
+                        </div>
+                    </div>
+                    <div class="analytics-stat hover-lift animate-number">
+                        <div class="stat-icon pulse-animation">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-value animate-counter" id="avgMonthlySpend" data-target="189.46">$0</div>
+                            <div class="stat-label">Avg Monthly Spend</div>
+                            <div class="stat-change neutral">+2.1% →</div>
+                        </div>
+                        <div class="stat-sparkline">
+                            <canvas width="100" height="30" id="avgSparkline"></canvas>
+                        </div>
+                    </div>
+                    <div class="analytics-stat hover-lift animate-number">
+                        <div class="stat-icon pulse-animation">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="mostExpensive">Adobe CC</div>
+                            <div class="stat-label">Most Expensive</div>
+                            <div class="stat-change">$52.99/mo</div>
+                        </div>
+                        <div class="stat-usage">
+                            <div class="usage-bar">
+                                <div class="usage-fill" style="width: 65%"></div>
+                            </div>
+                            <span class="usage-text">65% usage score</span>
+                        </div>
+                    </div>
+                    <div class="analytics-stat hover-lift animate-number">
+                        <div class="stat-icon pulse-animation">🏆</div>
+                        <div class="stat-content">
+                            <div class="stat-value animate-counter" id="totalSavings" data-target="156.80">$0</div>
+                            <div class="stat-label">Total Savings</div>
+                            <div class="stat-change positive pulse-glow">+$23 💰</div>
+                        </div>
+                        <div class="achievement-level">
+                            <div class="level-badge">Subscription Master</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card large glassmorphism hover-lift">
+                        <div class="chart-header">
+                            <h3>📈 Monthly Spending Trend</h3>
+                            <div class="chart-controls">
+                                <button class="chart-btn active" data-chart="line">Line</button>
+                                <button class="chart-btn" data-chart="bar">Bar</button>
+                            </div>
+                        </div>
+                        <div class="chart-container" style="position: relative; height: 400px;">
+                            <canvas id="spendingChart"></canvas>
+                            <div class="chart-tooltip" id="chartTooltip"></div>
+                        </div>
+                    </div>
+
+                    <div class="chart-card glassmorphism hover-lift">
+                        <div class="chart-header">
+                            <h3>🎯 Spending by Category</h3>
+                            <div class="chart-legend" id="categoryLegend"></div>
+                        </div>
+                        <div class="chart-container" style="position: relative; height: 300px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card glassmorphism hover-lift">
+                        <div class="chart-header">
+                            <h3>📅 Billing Cycles</h3>
+                            <div class="chart-summary">Optimization score: <span class="score-badge">87%</span></div>
+                        </div>
+                        <div class="billing-breakdown" id="billingBreakdown">
+                            <div class="billing-item">
+                                <div class="billing-type">
+                                    <div class="billing-icon">📅</div>
+                                    <div class="billing-info">
+                                        <div class="billing-name">Monthly</div>
+                                        <div class="billing-count">4 subscriptions</div>
+                                    </div>
+                                </div>
+                                <div class="billing-amount">$142.47</div>
+                                <div class="billing-progress">
+                                    <div class="progress-bar" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div class="billing-item">
+                                <div class="billing-type">
+                                    <div class="billing-icon">📆</div>
+                                    <div class="billing-info">
+                                        <div class="billing-name">Yearly</div>
+                                        <div class="billing-count">1 subscription</div>
+                                    </div>
+                                </div>
+                                <div class="billing-amount">$99.99</div>
+                                <div class="billing-progress">
+                                    <div class="progress-bar" style="width: 25%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-card glassmorphism hover-lift">
+                        <div class="chart-header">
+                            <h3>💡 AI Recommendations</h3>
+                            <div class="ai-badge pulse-glow">AI Powered</div>
+                        </div>
+                        <div class="insights-list" id="analyticsInsights">
+                            <div class="recommendation-item hover-lift">
+                                <div class="rec-icon">💰</div>
+                                <div class="rec-content">
+                                    <div class="rec-title">Switch to Annual Billing</div>
+                                    <div class="rec-desc">Save $280/year by switching Netflix and Spotify to yearly plans</div>
+                                </div>
+                                <div class="rec-action">
+                                    <div class="savings-amount">$280</div>
+                                    <button class="btn btn--sm btn--primary hover-lift">Apply</button>
+                                </div>
+                            </div>
+                            <div class="recommendation-item hover-lift">
+                                <div class="rec-icon">📦</div>
+                                <div class="rec-content">
+                                    <div class="rec-title">Bundle Opportunity</div>
+                                    <div class="rec-desc">Microsoft 365 + Adobe bundle could save $144/year</div>
+                                </div>
+                                <div class="rec-action">
+                                    <div class="savings-amount">$144</div>
+                                    <button class="btn btn--sm btn--primary hover-lift">Learn More</button>
+                                </div>
+                            </div>
+                            <div class="recommendation-item hover-lift">
+                                <div class="rec-icon">⚠️</div>
+                                <div class="rec-content">
+                                    <div class="rec-title">Unused Service Alert</div>
+                                    <div class="rec-desc">Adobe CC: No usage in last 30 days - Consider canceling</div>
+                                </div>
+                                <div class="rec-action">
+                                    <div class="savings-amount">$636</div>
+                                    <button class="btn btn--sm btn--outline hover-lift">Review</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div class="page hidden fade-in" id="profile">
+        <div class="container">
+            <div class="page-header">
+                <h1>👤 Profile Settings</h1>
+                <p>Manage your account settings and preferences</p>
+            </div>
+
+            <div class="profile-content">
+                <div class="profile-main">
+                    <div class="profile-section glassmorphism">
+                        <div class="section-header">
+                            <h2>Personal Information</h2>
+                            <p>Update your personal details</p>
+                        </div>
+                        <div class="profile-form-section">
+                            <div class="profile-avatar-section">
+                                <div class="profile-avatar-large hover-bounce" id="profileAvatar">JD</div>
+                                <button class="btn btn--outline btn--sm hover-lift" id="changeAvatarBtn">Change Photo</button>
+                                <div class="avatar-info">
+                                    <div class="user-name" id="profileUserName">John Doe</div>
+                                    <div class="user-email" id="profileUserEmail">john.doe@example.com</div>
+                                    <div class="user-joined">Member since Sept 2025</div>
+                                </div>
+                            </div>
+                            <form class="profile-form" id="profileForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" class="form-control hover-focus" id="profileFirstName">
+                                        <div class="input-underline"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" class="form-control hover-focus" id="profileLastName">
+                                        <div class="input-underline"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control hover-focus" id="profileEmail">
+                                    <div class="input-underline"></div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn--primary hover-lift pulse-glow">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="profile-section glassmorphism">
+                        <div class="section-header">
+                            <h2>Preferences</h2>
+                            <p>Customize your experience</p>
+                        </div>
+                        <div class="preferences-grid">
+                            <div class="preference-card hover-lift">
+                                <h4>🎨 Theme</h4>
+                                <div class="theme-options">
+                                    <div class="theme-option">
+                                        <input type="radio" name="theme" id="lightTheme" value="light">
+                                        <label for="lightTheme" class="theme-card light hover-lift">
+                                            <div class="theme-preview">☀️</div>
+                                            <span>Light</span>
+                                        </label>
+                                    </div>
+                                    <div class="theme-option">
+                                        <input type="radio" name="theme" id="darkTheme" value="dark">
+                                        <label for="darkTheme" class="theme-card dark hover-lift">
+                                            <div class="theme-preview">🌙</div>
+                                            <span>Dark</span>
+                                        </label>
+                                    </div>
+                                    <div class="theme-option">
+                                        <input type="radio" name="theme" id="autoTheme" value="auto" checked>
+                                        <label for="autoTheme" class="theme-card auto hover-lift">
+                                            <div class="theme-preview">🔄</div>
+                                            <span>Auto</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="preference-card hover-lift">
+                                <h4>🔔 Notifications</h4>
+                                <div class="notification-options">
+                                    <label class="checkbox-label hover-lift">
+                                        <input type="checkbox" id="renewalNotifications" checked>
+                                        <span class="checkmark"></span>
+                                        <div class="notification-info">
+                                            <div class="notification-title">Renewal reminders</div>
+                                            <div class="notification-desc">Get notified before subscriptions renew</div>
+                                        </div>
+                                    </label>
+                                    <label class="checkbox-label hover-lift">
+                                        <input type="checkbox" id="spendingAlerts" checked>
+                                        <span class="checkmark"></span>
+                                        <div class="notification-info">
+                                            <div class="notification-title">Spending alerts</div>
+                                            <div class="notification-desc">Alert when you exceed monthly budget</div>
+                                        </div>
+                                    </label>
+                                    <label class="checkbox-label hover-lift">
+                                        <input type="checkbox" id="monthlyReports">
+                                        <span class="checkmark"></span>
+                                        <div class="notification-info">
+                                            <div class="notification-title">Monthly reports</div>
+                                            <div class="notification-desc">Detailed spending analysis each month</div>
+                                        </div>
+                                    </label>
+                                    <label class="checkbox-label hover-lift">
+                                        <input type="checkbox" id="aiInsights" checked>
+                                        <span class="checkmark"></span>
+                                        <div class="notification-info">
+                                            <div class="notification-title">AI Insights</div>
+                                            <div class="notification-desc">Smart recommendations and savings tips</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="preference-card hover-lift">
+                                <h4>💰 Currency & Goals</h4>
+                                <div class="currency-settings">
+                                    <div class="form-group">
+                                        <label class="form-label">Currency</label>
+                                        <select class="form-control glassmorphism" id="currencySelect">
+                                            <option value="USD">USD ($)</option>
+                                            <option value="EUR">EUR (€)</option>
+                                            <option value="GBP">GBP (£)</option>
+                                            <option value="CAD">CAD ($)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Monthly Budget</label>
+                                        <input type="number" class="form-control hover-focus" id="monthlyBudget" placeholder="200.00">
+                                        <div class="input-underline"></div>
+                                    </div>
+                                    <div class="goal-progress">
+                                        <div class="goal-header">
+                                            <span>Current Progress</span>
+                                            <span class="goal-percentage">75%</span>
+                                        </div>
+                                        <div class="goal-bar">
+                                            <div class="goal-fill animate-width" style="width: 75%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Subscription Modal -->
+    <div class="modal modal-enhanced hidden" id="addSubscriptionModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content glassmorphism slide-in-modal">
+            <div class="modal-header">
+                <h3>➕ Add New Subscription</h3>
+                <button class="modal-close hover-spin" id="closeModalBtn">×</button>
+            </div>
+            
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="manual">Manual Entry</button>
+                <button class="tab-btn" data-tab="suggestions">Suggestions</button>
+            </div>
+
+            <div class="tab-content active" id="manual-tab">
+                <form class="modal-form" id="addSubscriptionForm">
+                    <div class="form-group">
+                        <label class="form-label">Service Name</label>
+                        <input type="text" class="form-control hover-focus" id="serviceName" placeholder="e.g., Netflix, Spotify, Adobe" required>
+                        <div class="service-suggestions" id="serviceSuggestions"></div>
+                        <div class="input-underline"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Cost</label>
+                            <input type="number" class="form-control hover-focus" id="serviceCost" placeholder="0.00" step="0.01" required>
+                            <div class="input-underline"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Billing Cycle</label>
+                            <select class="form-control glassmorphism" id="billingCycle" required>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly (Save 15%)</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="quarterly">Quarterly</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <div class="category-grid">
+                            <label class="category-option">
+                                <input type="radio" name="serviceCategory" value="Entertainment" required>
+                                <div class="category-card hover-lift">
+                                    <div class="category-icon">🎬</div>
+                                    <div class="category-name">Entertainment</div>
+                                </div>
+                            </label>
+                            <label class="category-option">
+                                <input type="radio" name="serviceCategory" value="Productivity" required>
+                                <div class="category-card hover-lift">
+                                    <div class="category-icon">💼</div>
+                                    <div class="category-name">Productivity</div>
+                                </div>
+                            </label>
+                            <label class="category-option">
+                                <input type="radio" name="serviceCategory" value="Cloud Storage" required>
+                                <div class="category-card hover-lift">
+                                    <div class="category-icon">☁️</div>
+                                    <div class="category-name">Cloud Storage</div>
+                                </div>
+                            </label>
+                            <label class="category-option">
+                                <input type="radio" name="serviceCategory" value="Music" required>
+                                <div class="category-card hover-lift">
+                                    <div class="category-icon">🎵</div>
+                                    <div class="category-name">Music</div>
+                                </div>
+                            </label>
+                            <label class="category-option">
+                                <input type="radio" name="serviceCategory" value="Health & Fitness" required>
+                                <div class="category-card hover-lift">
+                                    <div class="category-icon">💪</div>
+                                    <div class="category-name">Health & Fitness</div>
+                                </div>
+                            </label>
+                            <label class="category-option">
+                                <input type="radio" name="serviceCategory" value="Other" required>
+                                <div class="category-card hover-lift">
+                                    <div class="category-icon">📱</div>
+                                    <div class="category-name">Other</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Next Billing Date</label>
+                        <input type="date" class="form-control hover-focus" id="nextBilling" required>
+                        <div class="input-underline"></div>
+                    </div>
+                    <div class="cost-summary glassmorphism">
+                        <div class="cost-breakdown">
+                            <div class="cost-item">
+                                <span>Monthly equivalent:</span>
+                                <span id="monthlyCost">$0.00</span>
+                            </div>
+                            <div class="cost-item">
+                                <span>Yearly total:</span>
+                                <span id="yearlyCost">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn--outline hover-lift" id="cancelModalBtn">Cancel</button>
+                        <button type="submit" class="btn btn--primary hover-lift pulse-glow loading-btn">
+                            <span class="btn-text">Add Subscription</span>
+                            <span class="btn-loader hidden">
+                                <div class="spinner"></div>
+                            </span>
+                            <span class="btn-shimmer"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tab-content" id="suggestions-tab">
+                <div class="popular-services">
+                    <div class="popular-header">
+                        <h4>Popular Services</h4>
+                        <p>Quick add from commonly used subscriptions</p>
+                    </div>
+                    <div class="services-grid">
+                        <div class="service-card hover-lift" data-service="Disney+">
+                            <div class="service-icon">🏰</div>
+                            <div class="service-info">
+                                <div class="service-name">Disney+</div>
+                                <div class="service-price">$7.99/month</div>
+                            </div>
+                            <button class="btn btn--sm btn--primary hover-lift">Add</button>
+                        </div>
+                        <div class="service-card hover-lift" data-service="YouTube Premium">
+                            <div class="service-icon">📺</div>
+                            <div class="service-info">
+                                <div class="service-name">YouTube Premium</div>
+                                <div class="service-price">$11.99/month</div>
+                            </div>
+                            <button class="btn btn--sm btn--primary hover-lift">Add</button>
+                        </div>
+                        <div class="service-card hover-lift" data-service="Notion">
+                            <div class="service-icon">📝</div>
+                            <div class="service-info">
+                                <div class="service-name">Notion</div>
+                                <div class="service-price">$8.00/month</div>
+                            </div>
+                            <button class="btn btn--sm btn--primary hover-lift">Add</button>
+                        </div>
+                        <div class="service-card hover-lift" data-service="Figma">
+                            <div class="service-icon">🎨</div>
+                            <div class="service-info">
+                                <div class="service-name">Figma</div>
+                                <div class="service-price">$12.00/month</div>
+                            </div>
+                            <button class="btn btn--sm btn--primary hover-lift">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top hover-bounce" id="backToTop" title="Back to top">
+        ↑
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer glassmorphism">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="logo-icon pulse-animation">📊</div>
+                        <div class="logo-text">
+                            <h3 class="gradient-text">SubTracker</h3>
+                            <p>Smart Subscription Management</p>
+                        </div>
+                    </div>
+                    <p class="footer-desc">
+                        Take control of your subscriptions with intelligent tracking, 
+                        AI-powered insights, and beautiful analytics. Join thousands 
+                        of users saving money every month.
+                    </p>
+                    <div class="footer-stats">
+                        <div class="footer-stat">
+                            <div class="stat-number animate-counter" data-target="10000">0+</div>
+                            <div class="stat-label">Happy Users</div>
+                        </div>
+                        <div class="footer-stat">
+                            <div class="stat-number animate-counter" data-target="156">$0+</div>
+                            <div class="stat-label">Avg. Savings</div>
+                        </div>
+                        <div class="footer-stat">
+                            <div class="stat-number animate-counter" data-target="50000">0+</div>
+                            <div class="stat-label">Subscriptions Tracked</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <ul>
+                            <li><a href="#" class="hover-underline">Features</a></li>
+                            <li><a href="#" class="hover-underline">Analytics</a></li>
+                            <li><a href="#" class="hover-underline">API</a></li>
+                            <li><a href="#" class="hover-underline">Integrations</a></li>
+                            <li><a href="#" class="hover-underline">Pricing</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="#" class="hover-underline">About Us</a></li>
+                            <li><a href="#" class="hover-underline">Careers</a></li>
+                            <li><a href="#" class="hover-underline">Blog</a></li>
+                            <li><a href="#" class="hover-underline">Press Kit</a></li>
+                            <li><a href="#" class="hover-underline">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#" class="hover-underline">Help Center</a></li>
+                            <li><a href="#" class="hover-underline">Community</a></li>
+                            <li><a href="#" class="hover-underline">Guides</a></li>
+                            <li><a href="#" class="hover-underline">Webinars</a></li>
+                            <li><a href="#" class="hover-underline">Status Page</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#" class="hover-underline">Privacy Policy</a></li>
+                            <li><a href="#" class="hover-underline">Terms of Service</a></li>
+                            <li><a href="#" class="hover-underline">Cookie Policy</a></li>
+                            <li><a href="#" class="hover-underline">GDPR</a></li>
+                            <li><a href="#" class="hover-underline">Security</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-newsletter">
+                    <div class="newsletter-content">
+                        <h4>Stay Updated</h4>
+                        <p>Get the latest tips on subscription management and exclusive savings opportunities.</p>
+                        <form class="newsletter-form" id="newsletterForm">
+                            <div class="newsletter-input-group">
+                                <input type="email" class="form-control hover-focus" placeholder="Enter your email" id="newsletterEmail" required>
+                                <button type="submit" class="btn btn--primary hover-lift pulse-glow">
+                                    Subscribe
+                                </button>
+                            </div>
+                            <div class="newsletter-consent">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" required>
+                                    <span class="checkmark"></span>
+                                    <span class="consent-text">I agree to receive marketing emails</span>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-social">
+                <div class="social-links">
+                    <a href="#" class="social-link hover-bounce" target="_blank" title="Twitter">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link hover-bounce" target="_blank" title="LinkedIn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/>
+                            <circle cx="4" cy="4" r="2"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link hover-bounce" target="_blank" title="GitHub">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link hover-bounce" target="_blank" title="Discord">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+                        </svg>
+                    </a>
+                </div>
+                <div class="footer-app-links">
+                    <a href="#" class="app-link hover-lift" target="_blank">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47c-1.34.03-1.77-.79-3.29-.79c-1.53 0-2 .77-3.27.82c-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51c1.28-.02 2.5.87 3.29.87c.78 0 2.26-1.07 3.81-.91c.65.03 2.47.26 3.64 1.98c-.09.06-2.17 1.28-2.15 3.81c.03 3.02 2.65 4.03 2.68 4.04c-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5c.13 1.17-.34 2.35-1.04 3.19c-.69.85-1.83 1.51-2.95 1.42c-.15-1.15.41-2.35 1.05-3.11z"/>
+                        </svg>
+                        <span>Download for iOS</span>
+                    </a>
+                    <a href="#" class="app-link hover-lift" target="_blank">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                        </svg>
+                        <span>Download for Android</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>&copy; 2025 SubTracker. All rights reserved. Made with ❤️ for better subscription management.</p>
+                </div>
+                <div class="footer-meta">
+                    <div class="footer-badges">
+                        <div class="security-badge hover-lift">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z"/>
+                            </svg>
+                            <span>Secure</span>
+                        </div>
+                        <div class="security-badge hover-lift">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,2C13.1,2 14,2.9 14,4C14,5.1 13.1,6 12,6C10.9,6 10,5.1 10,4C10,2.9 10.9,2 12,2M21,9V7L15,1H5A2,2 0 0,0 3,3V21A2,2 0 0,0 5,23H19A2,2 0 0,0 21,21V9H21M19,9H14V4L19,9Z"/>
+                            </svg>
+                            <span>Privacy First</span>
+                        </div>
+                        <div class="security-badge hover-lift">
+                            <span class="badge-emoji">🏆</span>
+                            <span>#1 Rated</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
